@@ -1,14 +1,35 @@
-import React from "react";
-import logo from '../assets/logo.png'
+import React, { memo, useMemo } from "react";
+import logo from "../assets/logo.png";
 
 const LeftContent = ({ selectedDate, selectedTime }) => {
+  // Compute display time only when selectedTime changes
+  const formattedTime = useMemo(() => {
+    if (!selectedTime) return null;
+    return `${selectedTime} - ${parseInt(selectedTime) + 1}:00pm`;
+  }, [selectedTime]);
+
+  // Compute display date only when selectedDate changes
+  const formattedDate = useMemo(() => {
+    if (!selectedDate) return null;
+    return selectedDate.toLocaleDateString("en-US", {
+      weekday: "long",
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    });
+  }, [selectedDate]);
+
   return (
     <div className="content-left">
       <div className="purple-banner">
-        <div className="banner-logo"><img src={logo}  /></div>
+        <div className="banner-logo">
+          <img src={logo} alt="Logo" />
+        </div>
       </div>
       <div className="company-info">
-        <div className="small-logo"><img src={logo} width={40} /></div>
+        <div className="small-logo">
+          <img src={logo} width={40} alt="Small Logo" />
+        </div>
         <p>SD Campus ED-Tech PVT Ltd.</p>
         <h2>Sainik & JNV Entrance Exam Demo Session: SD Campus</h2>
       </div>
@@ -21,18 +42,12 @@ const LeftContent = ({ selectedDate, selectedTime }) => {
           <span className="icon">🖥</span>
           <span>Web Conferencing Details Provided Upon Confirmation.</span>
         </div>
-        {selectedDate && selectedTime && (
+        {formattedTime && formattedDate && (
           <>
             <div className="detail-item">
               <span className="icon">📅</span>
               <span>
-                {selectedTime} - {parseInt(selectedTime) + 1}:00pm,{" "}
-                {selectedDate.toLocaleDateString("en-US", {
-                  weekday: "long",
-                  month: "long",
-                  day: "numeric",
-                  year: "numeric",
-                })}
+                {formattedTime}, {formattedDate}
               </span>
             </div>
             <div className="detail-item">
@@ -68,4 +83,5 @@ const LeftContent = ({ selectedDate, selectedTime }) => {
   );
 };
 
-export default LeftContent;
+// Prevents unnecessary re-renders
+export default memo(LeftContent);
